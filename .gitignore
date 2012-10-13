@@ -1,0 +1,8 @@
+*.cmi
+*.cmo
+*.annot
+*~
+exe
+lexer.ml
+parser.ml
+parser.mli

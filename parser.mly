@@ -40,13 +40,16 @@ cunit:
 exp:
 	| NUM			{ NumC $1 }
 	| IDENTIFIER    { IdC (Ident $1) }
-	| LBRACE braced_exp RBRACE { $2 }
+	| LAMBDA LPAREN ident RPAREN braced_exp { LambdaC ($3, $5) }
+	| braced_exp    { $1 }
 ;
 braced_exp:
-	| PLUS      exp exp { PlusC  ($2, $3) }
-	| MULTIPLY  exp exp { MultC  ($2, $3) }
-	| APPLY     exp exp { AppC ($2, $3) }
-	| LAMBDA LPAREN ident RPAREN exp { LambdaC ($3, $5) }
+	| LBRACE inner_exp RBRACE { $2 }
+;
+inner_exp:
+	| PLUS exp exp     { PlusC  ($2, $3) }
+	| MULTIPLY exp exp { MultC  ($2, $3) }
+	| APPLY exp exp    { AppC   ($2, $3) }
 ;
 ident:
 	| IDENTIFIER { Ident $1 }
