@@ -20,6 +20,8 @@ open Ops
 %token FUNDEF
 %token APPLY
 %token LAMBDA
+%token ASSIGN
+%token SEQ
 
 %left PLUS MINUS
 %left MULTIPLY
@@ -50,6 +52,8 @@ inner_exp:
 	| PLUS exp exp     { PlusC  ($2, $3) }
 	| MULTIPLY exp exp { MultC  ($2, $3) }
 	| APPLY exp exp    { AppC   ($2, $3) }
+	| SEQ exp exp      { SeqC   ($2, $3) }
+	| ASSIGN exp exp   { SetboxC ($2, $3) }
 ;
 ident:
 	| IDENTIFIER { Ident $1 }

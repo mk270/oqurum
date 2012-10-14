@@ -21,7 +21,9 @@ rule token = parse
   | digit+ "." digit* as num
 		  { NUM (int_of_string num) }
   | "apply" { APPLY }
+  | "assign" { ASSIGN }
   | "lambda" { LAMBDA }
+  | "seq"    { SEQ }
   | letter+ as id { IDENTIFIER id }
   | '{'     { LBRACE }
   | '}'     { RBRACE }

@@ -1,3 +1,9 @@
 { apply lambda (x) { + x 1 } 99 }
 
 { + 100 200 }
+
+{ seq { + 2 3 } { + 10000 1 } }
+
+{ assign y 5 }
+
+{ seq { assign x 10 } { + x 11 } }
