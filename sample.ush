@@ -4,6 +4,8 @@
 
 { seq { + 2 3 } { + 10000 1 } }
 
-{ assign y 5 }
+{ apply lambda (x) { seq { assign x { + x 1 } } { * x 2 } } 11 }
 
-{ seq { assign x 10 } { + x 11 } }
+lambda (f) { apply lambda (x) { apply x x } lambda (y) { apply f { apply lambda (a) { apply y y } a } } }
+
+lambda (f) { apply lambda (x) { apply x x } lambda (y) { apply f { apply lambda (a) { apply y y } a } } }

@@ -6,7 +6,6 @@ type ident = Ident of string
 type value =
 	| Num of int
 	| Closure of ident * expressionC * environment
-	| Box of location
 and
 	binding = ident * location
 and
@@ -14,14 +13,12 @@ and
 and 
 	expressionC =
 	| NumC of int
-	| IdC of ident
+	| VarC of ident
 	| AppC of expressionC * expressionC
 	| PlusC of expressionC * expressionC
 	| MultC of expressionC * expressionC
 	| LambdaC of ident * expressionC
-	| BoxC of expressionC
-	| UnboxC of expressionC
-	| SetboxC of expressionC * expressionC
+	| SetC of ident * expressionC
 	| SeqC of expressionC * expressionC
 
 type cell = location * value
@@ -48,13 +45,12 @@ let string_of_location = function
 let string_of_value = function
 	| Num n -> string_of_int n
 	| Closure (id, _, _) -> "lambda(" ^ ") {...}"
-	| Box b -> "box(" ^ (string_of_location b) ^ ")"
 
 let rec dump_store = function 
 	| [] -> logf "[endofstore]\n"
 	| hd :: tl -> let l, v = hd in 
-					  logf "loc: %s" (string_of_location l); 
-					  logf "val: %s" (string_of_value v);
+					  logf "loc: %s\n" (string_of_location l); 
+					  logf "val: %s\n" (string_of_value v);
 					  dump_store tl
 
 let counter = ref 0
@@ -95,7 +91,8 @@ let num_mult l r =
 let rec interp expr env sto =
 	match expr with
 		| NumC n -> Result (Num n, sto)
-		| IdC n -> Result ((fetch (lookup n env) sto), sto)
+		| VarC n -> 
+			Result ((fetch (lookup n env) sto), sto)
 		| LambdaC (a, b) -> Result (Closure (a, b, env), sto)
 		| SeqC (b1, b2) -> 
 			logf "in SeqC\n";
@@ -115,19 +112,6 @@ let rec interp expr env sto =
 					(match (interp r env store_l) with
 						| Result (value_r, store_r) ->
 							Result ((num_mult value_l value_r), store_r)))
-		| BoxC a ->
-			(match (interp a env sto) with
-				| Result (value_a, store_a) ->
-					let where = new_loc () in
-						Result (Box where, (override_store (where, value_a) store_a)))
-		| UnboxC a ->
-			(match (interp a env sto) with
-				| Result (value_a, store_a) ->
-					let whence = match value_a with
-						| Box l -> l
-						| _ -> raise Internal_type_error
-					in
-						Result (fetch whence store_a, store_a))
 		| AppC (f, a) 
 			-> (match (interp f env sto) with
 				| Result (value_f, store_f) ->
@@ -141,16 +125,12 @@ let rec interp expr env sto =
 											(extend_env (value_f_arg, where) value_f_env)
 											(override_store (where, value_a) store_a)
 									| _ -> raise Internal_type_error)))
-		| SetboxC (b, v) -> 
-			(match (interp b env sto) with
-				| Result (value_b, store_b) ->
-					(match (interp v env store_b) with
-						| Result (value_v, store_v) ->
-							let whither = match value_b with
-								| Box l -> l
-								| _ -> raise Internal_type_error
-							in
-								Result (value_v, override_store (whither, value_v) store_v)))
+		| SetC (var, val_) 
+			-> (match (interp val_ env sto) with
+				| Result (value_val, store_val) ->
+					let where = lookup var env in
+						Result (value_val, 
+								override_store (where, value_val) store_val))
 
 let eval_and_print v =
 	let result = interp v empty_env empty_storage in

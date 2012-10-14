@@ -41,7 +41,7 @@ cunit:
 ;
 exp:
 	| NUM			{ NumC $1 }
-	| IDENTIFIER    { IdC (Ident $1) }
+	| IDENTIFIER    { VarC (Ident $1) }
 	| LAMBDA LPAREN ident RPAREN braced_exp { LambdaC ($3, $5) }
 	| braced_exp    { $1 }
 ;
@@ -53,7 +53,7 @@ inner_exp:
 	| MULTIPLY exp exp { MultC  ($2, $3) }
 	| APPLY exp exp    { AppC   ($2, $3) }
 	| SEQ exp exp      { SeqC   ($2, $3) }
-	| ASSIGN exp exp   { SetboxC ($2, $3) }
+	| ASSIGN ident exp { SetC   ($2, $3) }
 ;
 ident:
 	| IDENTIFIER { Ident $1 }
