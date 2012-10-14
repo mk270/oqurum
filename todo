@@ -1,0 +1,12 @@
+
+
+conditionals
+
+boolean types
+
+better handling of variable declaration
+
+negative numbers
+
+
+let fac f = function | 0 -> 1 | n -> n * f (n-1) ;;

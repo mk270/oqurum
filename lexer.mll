@@ -16,10 +16,7 @@ let nonnl = [ ^ '\n' ]
 rule token = parse
   | [' ' '\t']	{ token lexbuf }
   | '\n'		{ incr_lineno lexbuf; token lexbuf }
-  | digit+
-  | "." digit+
-  | digit+ "." digit* as num
-		  { NUM (int_of_string num) }
+  | "-"? digit+ as num { NUM (int_of_string num) }
   | "apply" { APPLY }
   | "assign" { ASSIGN }
   | "lambda" { LAMBDA }
@@ -28,6 +25,7 @@ rule token = parse
   | '{'     { LBRACE }
   | '}'     { RBRACE }
   | '+'		{ PLUS }
+  | '-'     { MINUS }
   | '*'     { MULTIPLY }
   | '('		{ LPAREN }
   | ')'		{ RPAREN }

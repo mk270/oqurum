@@ -21,6 +21,17 @@ and
 	| SetC of ident * expressionC
 	| SeqC of expressionC * expressionC
 
+type expressionS =
+	| NumS of int
+	| VarS of ident
+	| AppS of expressionS * expressionS
+	| PlusS of expressionS * expressionS
+	| BMinusS of expressionS * expressionS
+	| MultS of expressionS * expressionS
+	| LambdaS of ident * expressionS
+	| SetS of ident * expressionS
+	| SeqS of expressionS * expressionS
+
 type cell = location * value
 type store = cell list
 
@@ -88,6 +99,17 @@ let num_mult l r =
 		| Num l', Num r' -> Num (l' * r')
 		| _ -> raise Type_error
 
+let rec desugar = function
+	| NumS n -> NumC n
+	| VarS id -> VarC id
+	| AppS (fn, arg) -> AppC (desugar fn, desugar arg)
+	| PlusS (l, r) -> PlusC (desugar l, desugar r)
+	| MultS (l, r) -> MultC (desugar l, desugar r)
+	| BMinusS (l, r) -> PlusC (desugar l, MultC ((NumC (-1)), desugar r))
+	| LambdaS (id, e) -> LambdaC (id, desugar e)
+	| SetS (id, e) -> SetC (id, desugar e)
+	| SeqS (e1, e2) -> SeqC (desugar e1, desugar e2)
+
 let rec interp expr env sto =
 	match expr with
 		| NumC n -> Result (Num n, sto)
@@ -133,7 +155,7 @@ let rec interp expr env sto =
 								override_store (where, value_val) store_val))
 
 let eval_and_print v =
-	let result = interp v empty_env empty_storage in
+	let result = interp (desugar v) empty_env empty_storage in
 		match result with
 			| Result (vl, store) -> let s = string_of_value vl in
 										print_endline s;

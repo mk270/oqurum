@@ -11,6 +11,7 @@ open Ops
 %token <int> NUM
 %token <string> STRING
 %token PLUS
+%token MINUS
 %token MULTIPLY
 %token SEMICOLON
 %token LBRACE RBRACE
@@ -40,20 +41,21 @@ cunit:
 	| exp    { Ops.eval_and_print $1 }
 ;
 exp:
-	| NUM			{ NumC $1 }
-	| IDENTIFIER    { VarC (Ident $1) }
-	| LAMBDA LPAREN ident RPAREN braced_exp { LambdaC ($3, $5) }
+	| NUM			{ NumS $1 }
+	| IDENTIFIER    { VarS (Ident $1) }
+	| LAMBDA LPAREN ident RPAREN braced_exp { LambdaS ($3, $5) }
 	| braced_exp    { $1 }
 ;
 braced_exp:
 	| LBRACE inner_exp RBRACE { $2 }
 ;
 inner_exp:
-	| PLUS exp exp     { PlusC  ($2, $3) }
-	| MULTIPLY exp exp { MultC  ($2, $3) }
-	| APPLY exp exp    { AppC   ($2, $3) }
-	| SEQ exp exp      { SeqC   ($2, $3) }
-	| ASSIGN ident exp { SetC   ($2, $3) }
+	| PLUS exp exp     { PlusS  ($2, $3) }
+	| MINUS exp exp    { BMinusS ($2, $3) } 
+	| MULTIPLY exp exp { MultS  ($2, $3) }
+	| APPLY exp exp    { AppS   ($2, $3) }
+	| SEQ exp exp      { SeqS   ($2, $3) }
+	| ASSIGN ident exp { SetS   ($2, $3) }
 ;
 ident:
 	| IDENTIFIER { Ident $1 }
