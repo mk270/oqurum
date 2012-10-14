@@ -9,3 +9,6 @@
 lambda (f) { apply lambda (x) { apply x x } lambda (y) { apply f { apply lambda (a) { apply y y } a } } }
 
 lambda (f) { apply lambda (x) { apply x x } lambda (y) { apply f { apply lambda (a) { apply y y } a } } }
+
+
+{ if 0 2 3 }

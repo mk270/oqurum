@@ -20,6 +20,7 @@ and
 	| LambdaC of ident * expressionC
 	| SetC of ident * expressionC
 	| SeqC of expressionC * expressionC
+	| IfC of expressionC * expressionC * expressionC
 
 type expressionS =
 	| NumS of int
@@ -31,6 +32,7 @@ type expressionS =
 	| LambdaS of ident * expressionS
 	| SetS of ident * expressionS
 	| SeqS of expressionS * expressionS
+	| IfS of expressionS * expressionS * expressionS
 
 type cell = location * value
 type store = cell list
@@ -99,6 +101,10 @@ let num_mult l r =
 		| Num l', Num r' -> Num (l' * r')
 		| _ -> raise Type_error
 
+let is_true = function
+	| Num n -> n <> 0
+	| _ -> true
+
 let rec desugar = function
 	| NumS n -> NumC n
 	| VarS id -> VarC id
@@ -109,6 +115,7 @@ let rec desugar = function
 	| LambdaS (id, e) -> LambdaC (id, desugar e)
 	| SetS (id, e) -> SetC (id, desugar e)
 	| SeqS (e1, e2) -> SeqC (desugar e1, desugar e2)
+	| IfS (e1, e2, e3) -> IfC (desugar e1, desugar e2, desugar e3)
 
 let rec interp expr env sto =
 	match expr with
@@ -153,6 +160,16 @@ let rec interp expr env sto =
 					let where = lookup var env in
 						Result (value_val, 
 								override_store (where, value_val) store_val))
+		| IfC (t, e1, e2) -> 
+			(match (interp t env sto) with
+				| Result (value_t, store_t) ->
+					let e = 
+						if is_true value_t
+						then e1
+						else e2
+					in
+						interp e env store_t)
+			
 
 let eval_and_print v =
 	let result = interp (desugar v) empty_env empty_storage in

@@ -23,6 +23,7 @@ open Ops
 %token LAMBDA
 %token ASSIGN
 %token SEQ
+%token IF
 
 %left PLUS MINUS
 %left MULTIPLY
@@ -56,6 +57,7 @@ inner_exp:
 	| APPLY exp exp    { AppS   ($2, $3) }
 	| SEQ exp exp      { SeqS   ($2, $3) }
 	| ASSIGN ident exp { SetS   ($2, $3) }
+	| IF exp exp exp   { IfS    ($2, $3, $4) }
 ;
 ident:
 	| IDENTIFIER { Ident $1 }

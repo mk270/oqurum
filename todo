@@ -1,10 +1,6 @@
 
-
-conditionals
-
 boolean types
 
 better handling of variable declaration
 
-
-let fac f = function | 0 -> 1 | n -> n * f (n-1) ;;
+let fac = fun f -> function | 0 -> 1 | n -> n * f (n-1) ;;
