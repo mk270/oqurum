@@ -44,20 +44,20 @@ cunit:
 exp:
 	| NUM			{ NumS $1 }
 	| IDENTIFIER    { VarS (Ident $1) }
-	| LAMBDA LPAREN ident RPAREN braced_exp { LambdaS ($3, $5) }
 	| braced_exp    { $1 }
 ;
 braced_exp:
 	| LBRACE inner_exp RBRACE { $2 }
 ;
 inner_exp:
-	| PLUS exp exp     { PlusS  ($2, $3) }
-	| MINUS exp exp    { BMinusS ($2, $3) } 
-	| MULTIPLY exp exp { MultS  ($2, $3) }
-	| APPLY exp exp    { AppS   ($2, $3) }
+	| LAMBDA LPAREN ident RPAREN exp { LambdaS ($3, $5) }
 	| SEQ exp exp      { SeqS   ($2, $3) }
 	| ASSIGN ident exp { SetS   ($2, $3) }
 	| IF exp exp exp   { IfS    ($2, $3, $4) }
+	| APPLY exp exp    { AppS   ($2, $3) }
+	| PLUS exp exp     { PlusS  ($2, $3) }
+	| MINUS exp exp    { BMinusS ($2, $3) } 
+	| MULTIPLY exp exp { MultS  ($2, $3) }
 ;
 ident:
 	| IDENTIFIER { Ident $1 }

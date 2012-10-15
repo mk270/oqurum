@@ -1,14 +1,36 @@
-{ apply lambda (x) { + x 1 } 99 }
+{ apply { lambda (x) { + x 1 } } 99 }
 
 { + 100 200 }
 
 { seq { + 2 3 } { + 10000 1 } }
 
-{ apply lambda (x) { seq { assign x { + x 1 } } { * x 2 } } 11 }
+{ apply { lambda (x) { seq { assign x { + x 1 } } { * x 2 } } } 11 } 
 
-lambda (f) { apply lambda (x) { apply x x } lambda (y) { apply f { apply lambda (a) { apply y y } a } } }
+# fun f -> fun n -> if n == 0
+#                   then 1
+#                   else n * f (n-1)
 
-lambda (f) { apply lambda (x) { apply x x } lambda (y) { apply f { apply lambda (a) { apply y y } a } } }
+{ lambda (f) { apply 
+  { lambda (x) { apply x x } }
+  { lambda (y) { apply f { apply 
+		         { lambda (a) { apply y y } }
+                 a } } } } }
 
 
-{ if 0 2 3 }
+{ lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } }
+
+# fun f -> (fun x -> (fun a -> f (x x) a)) 
+#          (fun x -> (fun a -> f (x x) a))
+
+# calculates factorial(5):
+
+{ apply
+  { apply
+    { lambda (f) { 
+      apply
+        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
+        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
+      } }
+  { lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } } }
+  5 
+}
