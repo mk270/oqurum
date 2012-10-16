@@ -34,3 +34,7 @@
   { lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } } }
   5 
 }
+
+{ apply { apply { lambda (a) { lambda (b) { + a b } } } 3 } 4 }
+
+# { apply { lambda (a, b) { + a b } } (1, 2) }

@@ -3,4 +3,6 @@ boolean types
 
 better handling of variable declaration
 
-prolog style searching
+prolog style searching (inc non-deterministic)
+
+lwt as primitives

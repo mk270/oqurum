@@ -3,13 +3,12 @@ type location = Location of int
 
 type ident = Ident of string
 
+type binding = ident * location
+type environment = binding list
+
 type value =
 	| Num of int
 	| Closure of ident * expressionC * environment
-and
-	binding = ident * location
-and
-	environment = binding list
 and 
 	expressionC =
 	| NumC of int
@@ -58,13 +57,6 @@ let string_of_location = function
 let string_of_value = function
 	| Num n -> string_of_int n
 	| Closure (id, _, _) -> "lambda(" ^ ") {...}"
-
-let rec dump_store = function 
-	| [] -> logf "[endofstore]\n"
-	| hd :: tl -> let l, v = hd in 
-					  logf "loc: %s\n" (string_of_location l); 
-					  logf "val: %s\n" (string_of_value v);
-					  dump_store tl
 
 let counter = ref 0
 
@@ -124,8 +116,8 @@ let rec interp expr env sto =
 			Result ((fetch (lookup n env) sto), sto)
 		| LambdaC (a, b) -> Result (Closure (a, b, env), sto)
 		| SeqC (b1, b2) -> 
-			logf "in SeqC\n";
-			dump_store sto;
+(*			logf "in SeqC\n";
+			dump_store sto; *)
 			(match (interp b1 env sto) with
 				| Result (value_b1, store_b1) ->
 					interp b2 env store_b1)
@@ -169,7 +161,13 @@ let rec interp expr env sto =
 						else e2
 					in
 						interp e env store_t)
-			
+
+let rec dump_store = function 
+	| [] -> logf "[endofstore]\n"
+	| hd :: tl -> let l, v = hd in 
+					  logf "loc: %s\n" (string_of_location l); 
+					  logf "val: %s\n" (string_of_value v);
+					  dump_store tl		
 
 let eval_and_print v =
 	let result = interp (desugar v) empty_env empty_storage in
