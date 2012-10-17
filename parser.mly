@@ -24,9 +24,11 @@ open Ops
 %token ASSIGN
 %token SEQ
 %token IF
+%token COMMA
 
 %left PLUS MINUS
 %left MULTIPLY
+%left COMMA
 %right CARET	/* exponentiation */
 
 %start input
@@ -50,7 +52,7 @@ braced_exp:
 	| LBRACE inner_exp RBRACE { $2 }
 ;
 inner_exp:
-	| LAMBDA LPAREN ident RPAREN exp { LambdaS ($3, $5) }
+	| LAMBDA LPAREN ident_list_wrap RPAREN exp { LambdaS ($3, $5) }
 	| SEQ exp exp      { SeqS   ($2, $3) }
 	| ASSIGN ident exp { SetS   ($2, $3) }
 	| IF exp exp exp   { IfS    ($2, $3, $4) }
@@ -59,7 +61,13 @@ inner_exp:
 	| MINUS exp exp    { BMinusS ($2, $3) } 
 	| MULTIPLY exp exp { MultS  ($2, $3) }
 ;
+ident_list_wrap:
+	| ident_list { List.rev $1 }
+;
+ident_list:
+	| ident_list COMMA ident { $3 :: $1 }
+	| ident { [ $1 ] }
+;
 ident:
 	| IDENTIFIER { Ident $1 }
 ;
-

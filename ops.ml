@@ -28,7 +28,7 @@ type expressionS =
 	| PlusS of expressionS * expressionS
 	| BMinusS of expressionS * expressionS
 	| MultS of expressionS * expressionS
-	| LambdaS of ident * expressionS
+	| LambdaS of (ident list) * expressionS
 	| SetS of ident * expressionS
 	| SeqS of expressionS * expressionS
 	| IfS of expressionS * expressionS * expressionS
@@ -42,6 +42,7 @@ exception Name_not_found of string
 exception Type_error
 exception Internal_type_error
 exception Not_implemented of string
+exception Duplicate_identifier of ident
 
 let empty_env : environment = []
 let extend_env new_binding env = new_binding :: env
@@ -104,7 +105,14 @@ let rec desugar = function
 	| PlusS (l, r) -> PlusC (desugar l, desugar r)
 	| MultS (l, r) -> MultC (desugar l, desugar r)
 	| BMinusS (l, r) -> PlusC (desugar l, MultC ((NumC (-1)), desugar r))
-	| LambdaS (id, e) -> LambdaC (id, desugar e)
+	| LambdaS (ids, e) -> 
+		(* check_unique ids; *)
+		let rec fold_lambdac = function
+			| [] -> desugar e
+			| hd :: tl -> LambdaC (hd, (fold_lambdac tl))
+		in
+			fold_lambdac ids
+		(* LambdaC (List.hd ids, desugar e) *)
 	| SetS (id, e) -> SetC (id, desugar e)
 	| SeqS (e1, e2) -> SeqC (desugar e1, desugar e2)
 	| IfS (e1, e2, e3) -> IfC (desugar e1, desugar e2, desugar e3)

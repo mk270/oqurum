@@ -23,6 +23,7 @@ rule token = parse
   | "seq"    { SEQ }
   | "if"     { IF }
   | letter+ as id { IDENTIFIER id }
+  | ','     { COMMA }
   | '{'     { LBRACE }
   | '}'     { RBRACE }
   | '+'		{ PLUS }
