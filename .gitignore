@@ -2,7 +2,7 @@
 *.cmo
 *.annot
 *~
-exe
+oq
 lexer.ml
 parser.ml
 parser.mli

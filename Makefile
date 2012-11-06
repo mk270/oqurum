@@ -1,7 +1,8 @@
 
+TGT := oq
 OCAMLC := ocamlc -annot
 
-exe: ops.cmo parser.cmo lexer.cmo main.ml
+$(TGT): ops.cmo parser.cmo lexer.cmo main.ml
 	$(OCAMLC) -o $@ ops.ml parser.ml lexer.ml main.ml
 
 lexer.ml: lexer.mll
@@ -23,5 +24,5 @@ lexer.cmo: lexer.ml
 clean:
 	rm -f -- *.mli *.cmo *.cmi parser.ml lexer.ml exe a.out *~ *annot
 
-test: exe
-	./exe < sample.ush
+test: $(TGT)
+	./$(TGT) < tests.oq
