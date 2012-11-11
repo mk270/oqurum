@@ -161,18 +161,9 @@ let rec interp expr env sto =
 			(match (interp b1 env sto) with
 				| Result (value_b1, store_b1) ->
 					interp b2 env store_b1)
-		| PlusC (l, r) -> 
-			(match (interp l env sto) with
-				| Result (value_l, store_l) ->
-					(match (interp r env store_l) with
-						| Result (value_r, store_r) ->
-							Result ((num_plus value_l value_r), store_r)))
-		| MultC (l, r) -> 
-			(match (interp l env sto) with
-				| Result (value_l, store_l) ->
-					(match (interp r env store_l) with
-						| Result (value_r, store_r) ->
-							Result ((num_mult value_l value_r), store_r)))
+		| LessThanEqC (l, r) -> interp_binary_op num_lte  l r env sto
+		| PlusC (l, r)       -> interp_binary_op num_plus l r env sto
+		| MultC (l, r)       -> interp_binary_op num_mult l r env sto
 		| AppC (f, a) 
 			-> (match (interp f env sto) with
 				| Result (value_f, store_f) ->
@@ -201,12 +192,12 @@ let rec interp expr env sto =
 						else e2
 					in
 						interp e env store_t)
-		| LessThanEqC (l, r) -> 
-			(match (interp l env sto) with
-				| Result (value_l, store_l) ->
-					(match (interp r env store_l) with
-						| Result (value_r, store_r) ->
-							Result ((num_lte value_l value_r), store_r)))
+and interp_binary_op f l r env sto =
+	(match (interp l env sto) with
+		| Result (value_l, store_l) ->
+			(match (interp r env store_l) with
+				| Result (value_r, store_r) ->
+					Result ((f value_l value_r), store_r)))
 
 let rec dump_store = function 
 	| [] -> logf "[endofstore]\n"
