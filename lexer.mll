@@ -20,6 +20,7 @@ rule token = parse
   | "apply" { APPLY }
   | "assign" { ASSIGN }
   | "lambda" { LAMBDA }
+  | "defvar" { DEFVAR }
   | "seq"    { SEQ }
   | "if"     { IF }
   | letter+ as id { IDENTIFIER id }

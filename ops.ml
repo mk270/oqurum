@@ -32,6 +32,7 @@ type expressionS =
 	| SetS of ident * expressionS
 	| SeqS of expressionS * expressionS
 	| IfS of expressionS * expressionS * expressionS
+	| DefVarS of ident * expressionS * expressionS
 
 type cell = location * value
 type store = cell list
@@ -116,6 +117,12 @@ let rec desugar = function
 	| SetS (id, e) -> SetC (id, desugar e)
 	| SeqS (e1, e2) -> SeqC (desugar e1, desugar e2)
 	| IfS (e1, e2, e3) -> IfC (desugar e1, desugar e2, desugar e3)
+	| DefVarS (id, e1, e2) ->
+		let dummy = NumC 0 in
+			AppC (LambdaC (id, SeqC (
+				SetC (id, desugar e1),
+				desugar e2
+			)), dummy)
 
 let rec interp expr env sto =
 	match expr with

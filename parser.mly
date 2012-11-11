@@ -19,6 +19,7 @@ open Ops
 %token EOF
 %token WITH
 %token FUNDEF
+%token DEFVAR
 %token APPLY
 %token LAMBDA
 %token ASSIGN
@@ -60,6 +61,7 @@ inner_exp:
 	| PLUS exp exp     { PlusS  ($2, $3) }
 	| MINUS exp exp    { BMinusS ($2, $3) } 
 	| MULTIPLY exp exp { MultS  ($2, $3) }
+	| DEFVAR LPAREN ident exp RPAREN exp { DefVarS ($3, $4, $6) }
 ;
 ident_list_wrap:
 	| ident_list { List.rev $1 }

@@ -76,3 +76,4 @@
   3
 }
 
+{ defvar (double { lambda (x) { * x 2 } }) { apply double 4 } }
