@@ -173,7 +173,7 @@ let rec interp expr env sto =
 											value_f_body 
 											(extend_env (value_f_arg, where) value_f_env)
 											(override_store (where, value_a) store_a)
-									| _ -> raise Internal_type_error)))
+									| _ -> raise Type_error)))
 		| SetC (var, val_) 
 			-> (match (interp val_ env sto) with
 				| Result (value_val, store_val) ->
