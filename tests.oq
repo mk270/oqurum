@@ -105,9 +105,10 @@
   apply
     { lambda(x) { lambda(a) { apply f { apply x x } a } } }
     { lambda(x) { lambda(a) { apply f { apply x x } a } } }
-  } {
-  deffunc fac(n) { if n { * n { apply f { - n 1 } } } 1 }
-  } {
-    apply zcombinator fac 5
   }
+  {
+     deffunc fac(f) { lambda(n) { if n { * n { apply f { -n 1 } } } 1 } } {
+      apply zcombinator fac 6 }
+  }
+
 }
