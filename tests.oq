@@ -42,18 +42,6 @@
 
 { apply { apply { apply { lambda (a, b, c) { - a { * b c } } } 10000 } 3 } 19 }
 
-{ apply
-  { apply
-    { lambda (f) { 
-      apply
-        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
-        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
-      } }
-    { lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } }
-  }		
-  5 
-}
-
 { apply 
   { lambda (y) 
     { apply
@@ -99,3 +87,27 @@
 { apply
     { lambda (x, y, z) { * z { - y x } } }
 	5 300 2 }
+
+
+{ apply
+  { apply
+    { lambda (f) { 
+      apply
+        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
+        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
+      } }
+    { lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } }
+  }		
+  5 
+}
+
+{ deffunc zcombinator(f) {
+  apply
+    { lambda(x) { lambda(a) { apply f { apply x x } a } } }
+    { lambda(x) { lambda(a) { apply f { apply x x } a } } }
+  } {
+  deffunc fac(n) { if n { * n { apply f { - n 1 } } } 1 }
+  } {
+    apply zcombinator fac 5
+  }
+}
