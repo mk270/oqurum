@@ -20,6 +20,7 @@ open Ops
 %token WITH
 %token FUNDEF
 %token DEFVAR
+%token DEFFUNC
 %token APPLY
 %token LAMBDA
 %token ASSIGN
@@ -57,11 +58,13 @@ inner_exp:
 	| SEQ exp exp      { SeqS   ($2, $3) }
 	| ASSIGN ident exp { SetS   ($2, $3) }
 	| IF exp exp exp   { IfS    ($2, $3, $4) }
-	| APPLY exp exp    { AppS   ($2, $3) }
+	| APPLY exp exp_list { AppS   ($2, $3) }
 	| PLUS exp exp     { PlusS  ($2, $3) }
 	| MINUS exp exp    { BMinusS ($2, $3) } 
 	| MULTIPLY exp exp { MultS  ($2, $3) }
 	| DEFVAR LPAREN ident exp RPAREN exp { DefVarS ($3, $4, $6) }
+	| DEFFUNC ident LPAREN ident_list RPAREN exp exp 
+			{ DefFuncS ($2, $4, $6, $7) }
 ;
 ident_list_wrap:
 	| ident_list { List.rev $1 }
@@ -72,4 +75,8 @@ ident_list:
 ;
 ident:
 	| IDENTIFIER { Ident $1 }
+;
+exp_list:
+	| exp_list exp { $2 :: $1 }
+	| exp { [ $1 ] }
 ;

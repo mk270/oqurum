@@ -21,6 +21,7 @@ rule token = parse
   | "assign" { ASSIGN }
   | "lambda" { LAMBDA }
   | "defvar" { DEFVAR }
+  | "deffunc" { DEFFUNC }
   | "seq"    { SEQ }
   | "if"     { IF }
   | letter+ as id { IDENTIFIER id }

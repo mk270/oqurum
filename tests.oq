@@ -77,3 +77,25 @@
 }
 
 { defvar (double { lambda (x) { * x 2 } }) { apply double 4 } }
+
+{ deffunc double (x) { * x 2 } { apply double 5 } }
+
+#{ deffunc multiply (x, y) { * x y } { apply multiply 7 11 } }
+
+{ apply 
+  { lambda (y)
+    { apply  
+      { lambda(x) { - 500 x } }
+      y
+    }
+  }
+  5 
+}
+
+{ apply { apply { apply 
+    { lambda (x, y, z) { * z { - y x } } }
+    5 } 300 } 2 }
+
+{ apply
+    { lambda (x, y, z) { * z { - y x } } }
+	5 300 2 }

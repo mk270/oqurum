@@ -24,7 +24,7 @@ and
 type expressionS =
 	| NumS of int
 	| VarS of ident
-	| AppS of expressionS * expressionS
+	| AppS of expressionS * (expressionS list)
 	| PlusS of expressionS * expressionS
 	| BMinusS of expressionS * expressionS
 	| MultS of expressionS * expressionS
@@ -33,6 +33,7 @@ type expressionS =
 	| SeqS of expressionS * expressionS
 	| IfS of expressionS * expressionS * expressionS
 	| DefVarS of ident * expressionS * expressionS
+	| DefFuncS of ident * (ident list) * expressionS * expressionS
 
 type cell = location * value
 type store = cell list
@@ -44,6 +45,7 @@ exception Type_error
 exception Internal_type_error
 exception Not_implemented of string
 exception Duplicate_identifier of ident
+exception Bare_application
 
 let empty_env : environment = []
 let extend_env new_binding env = new_binding :: env
@@ -102,7 +104,14 @@ let is_true = function
 let rec desugar = function
 	| NumS n -> NumC n
 	| VarS id -> VarC id
-	| AppS (fn, arg) -> AppC (desugar fn, desugar arg)
+	| AppS (fn, args) -> 
+		let fnS = desugar fn in
+		let rec fold_appc = function
+			| [] -> raise Bare_application
+			| [arg] -> AppC (fnS, desugar arg)
+			| hd :: tl -> AppC (fold_appc tl, desugar hd)
+		in
+			fold_appc args
 	| PlusS (l, r) -> PlusC (desugar l, desugar r)
 	| MultS (l, r) -> MultC (desugar l, desugar r)
 	| BMinusS (l, r) -> PlusC (desugar l, MultC ((NumC (-1)), desugar r))
@@ -123,6 +132,10 @@ let rec desugar = function
 				SetC (id, desugar e1),
 				desugar e2
 			)), dummy)
+	| DefFuncS (func_id, arg_id, e1, e2) ->
+		desugar (DefVarS (func_id, 
+						  LambdaS (arg_id, e1)
+				 , e2))
 
 let rec interp expr env sto =
 	match expr with
