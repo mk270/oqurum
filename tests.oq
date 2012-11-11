@@ -31,7 +31,8 @@
         { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
         { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
       } }
-  { lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } } }
+    { lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } }
+  }		
   5 
 }
 
@@ -40,4 +41,38 @@
 { apply { apply { lambda (a, b) { - a b } } 10 } 2 }
 
 { apply { apply { apply { lambda (a, b, c) { - a { * b c } } } 10000 } 3 } 19 }
+
+{ apply
+  { apply
+    { lambda (f) { 
+      apply
+        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
+        { lambda (x) { lambda (a) { apply { apply f { apply x x } } a } } }
+      } }
+    { lambda (f) { lambda (n) { if n { * n { apply f { - n 1 } } } 1 } } }
+  }		
+  5 
+}
+
+{ apply 
+  { lambda (y) 
+    { apply
+      { lambda (x) { seq { assign x 12 } { + x y } } }
+	  1000 }
+  }
+  3
+}
+
+
+{ apply 
+  { lambda (y) 
+    { apply
+      { lambda (double) { seq 
+	                         { assign double { lambda (x) { * x 2 } } }
+                             { apply double y } 
+                           } }
+	  1000 }
+  }
+  3
+}
 

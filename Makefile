@@ -1,6 +1,6 @@
 
 TGT := oq
-OCAMLC := ocamlc -annot
+OCAMLC := ocamlc -annot -g
 
 $(TGT): ops.cmo parser.cmo lexer.cmo main.ml
 	$(OCAMLC) -o $@ ops.ml parser.ml lexer.ml main.ml
