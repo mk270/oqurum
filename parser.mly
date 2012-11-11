@@ -27,6 +27,7 @@ open Ops
 %token SEQ
 %token IF
 %token COMMA
+%token LTE
 
 %left PLUS MINUS
 %left MULTIPLY
@@ -65,6 +66,7 @@ inner_exp:
 	| DEFVAR LPAREN ident exp RPAREN exp { DefVarS ($3, $4, $6) }
 	| DEFFUNC ident LPAREN ident_list RPAREN exp exp 
 			{ DefFuncS ($2, $4, $6, $7) }
+	| LTE exp exp { LessThanEqS ($2, $3) }
 ;
 ident_list_wrap:
 	| ident_list { List.rev $1 }

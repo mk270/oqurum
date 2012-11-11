@@ -20,6 +20,7 @@ and
 	| SetC of ident * expressionC
 	| SeqC of expressionC * expressionC
 	| IfC of expressionC * expressionC * expressionC
+	| LessThanEqC of expressionC * expressionC
 
 type expressionS =
 	| NumS of int
@@ -34,6 +35,7 @@ type expressionS =
 	| IfS of expressionS * expressionS * expressionS
 	| DefVarS of ident * expressionS * expressionS
 	| DefFuncS of ident * (ident list) * expressionS * expressionS
+	| LessThanEqS of expressionS * expressionS
 
 type cell = location * value
 type store = cell list
@@ -101,6 +103,15 @@ let is_true = function
 	| Num n -> n <> 0
 	| _ -> true
 
+let int_of_bool = function
+	| true -> 1
+	| false -> 0
+
+let num_lte l r =
+	match l, r with
+		| Num l', Num r' -> Num (int_of_bool (l' <= r'))
+		| _ -> raise Type_error
+
 let rec desugar = function
 	| NumS n -> NumC n
 	| VarS id -> VarC id
@@ -136,6 +147,7 @@ let rec desugar = function
 		desugar (DefVarS (func_id, 
 						  LambdaS (arg_id, e1)
 				 , e2))
+	| LessThanEqS (e1, e2) -> LessThanEqC (desugar e1, desugar e2)
 
 let rec interp expr env sto =
 	match expr with
@@ -189,6 +201,12 @@ let rec interp expr env sto =
 						else e2
 					in
 						interp e env store_t)
+		| LessThanEqC (l, r) -> 
+			(match (interp l env sto) with
+				| Result (value_l, store_l) ->
+					(match (interp r env store_l) with
+						| Result (value_r, store_r) ->
+							Result ((num_lte value_l value_r), store_r)))
 
 let rec dump_store = function 
 	| [] -> logf "[endofstore]\n"

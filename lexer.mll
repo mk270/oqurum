@@ -10,6 +10,8 @@
 }
 let digit = ['0'-'9']
 let letter = ['a'-'z']
+let alnum = (letter | digit)
+let identifier = letter alnum*
 let nonquote = [ ^ '"' ]
 let nonnl = [ ^ '\n' ]
 
@@ -24,7 +26,8 @@ rule token = parse
   | "deffunc" { DEFFUNC }
   | "seq"    { SEQ }
   | "if"     { IF }
-  | letter+ as id { IDENTIFIER id }
+  | identifier as id { IDENTIFIER id }
+  | "<="    { LTE }
   | ','     { COMMA }
   | '{'     { LBRACE }
   | '}'     { RBRACE }
