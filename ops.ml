@@ -60,14 +60,39 @@ let logf = Printf.printf
 let string_of_location = function
 	| Location l -> "@" ^ (string_of_int l)
 
-let string_of_value = function
-	| Num n -> string_of_int n
-	| Closure (id, _, _) -> "lambda(" ^ ") {...}"
-
-let counter = ref 0
-
 let string_of_ident = function
 	| Ident s -> "$" ^ s
+
+
+let string_of_expression exp =
+	let rec string_of_expression = function
+		| NumC n -> string_of_int n ^ " : int"	
+		| VarC id -> string_of_ident id
+		| LambdaC (id, e1) -> string_of_id_e1 id e1 "lambda"
+		| SetC (id, e1) -> string_of_id_e1 id e1 "set!"
+		| AppC (e1, e2) -> string_of_e1_e2 e1 e2 "apply"
+		| PlusC (e1, e2) -> string_of_e1_e2 e1 e2 "+" 
+		| MultC (e1, e2) -> string_of_e1_e2 e1 e2 "*"
+		| SeqC (e1, e2) -> string_of_e1_e2 e1 e2 "seq"
+		| LessThanEqC (e1, e2) -> string_of_e1_e2 e1 e2 "lte"
+		| IfC (e1, e2, e3) -> "if(" ^ string_of_expression e1 ^
+			", " ^ string_of_expression e2 ^
+			", " ^ string_of_expression e3 ^ ")"
+	and string_of_e1_e2 e1 e2 name =
+		name ^ "(" ^ string_of_expression e1 ^ ", " ^
+			string_of_expression e2 ^ ")"
+	and string_of_id_e1 id e1 name =
+		name ^ "(" ^ string_of_ident id ^ ") { " ^
+			string_of_expression e1 ^ " }"
+	in
+		string_of_expression exp
+
+let string_of_value = function
+	| Num n -> string_of_int n
+	| Closure (id, e1, _) -> "closure(" ^ (string_of_ident id) ^ ") {" ^
+		string_of_expression e1 ^ "}"
+
+let counter = ref 0
 
 let new_loc () =
 	(counter := !counter + 1;
