@@ -11,14 +11,16 @@ lexer.ml: lexer.mll
 parser.ml: parser.mly
 	ocamlyacc $<
 
-ops.cmo: ops.ml
+ops.cmo ops.cmi: ops.ml
 	$(OCAMLC) -c ops.ml
 
-parser.cmo: parser.ml
+parser.cmo parser.cmi: ops.cmi parser.ml
 	$(OCAMLC) -c parser.mli parser.ml
 
-lexer.cmo: lexer.ml
+lexer.cmo: parser.cmi lexer.ml
 	$(OCAMLC) -c lexer.ml
+
+
 
 .PHONY: clean test
 clean:
