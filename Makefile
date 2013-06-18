@@ -24,7 +24,7 @@ lexer.cmo: parser.cmi lexer.ml
 
 .PHONY: clean test
 clean:
-	rm -f -- *.mli *.cmo *.cmi parser.ml lexer.ml exe a.out *~ *annot
+	rm -f -- *.mli *.cmo *.cmi parser.ml lexer.ml $(TGT) a.out *~ *annot
 
 test: $(TGT)
 	./$(TGT) < tests.oq
