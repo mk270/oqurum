@@ -12,12 +12,29 @@
 {
   open Parser
   open Lexing
+
+  exception Unexpected_token
+
   let incr_lineno lexbuf =
     let pos = lexbuf.lex_curr_p in
     lexbuf.lex_curr_p <- { pos with
       pos_lnum = pos.pos_lnum + 1;
       pos_bol = pos.pos_cnum;
     }
+
+  let keyword_table = Hashtbl.create 72
+  let _ =
+    List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
+              [
+				("apply", APPLY);
+				("assign", ASSIGN);
+				("lambda", LAMBDA);
+				("defvar", DEFVAR);
+				("deffunc", DEFFUNC);
+				("seq", SEQ);
+				("if", IF);
+              ]
+
 }
 let digit = ['0'-'9']
 let letter = ['a'-'z']
@@ -30,14 +47,9 @@ rule token = parse
   | [' ' '\t']	{ token lexbuf }
   | '\n'		{ incr_lineno lexbuf; token lexbuf }
   | "-"? digit+ as num { NUM (int_of_string num) }
-  | "apply" { APPLY }
-  | "assign" { ASSIGN }
-  | "lambda" { LAMBDA }
-  | "defvar" { DEFVAR }
-  | "deffunc" { DEFFUNC }
-  | "seq"    { SEQ }
-  | "if"     { IF }
-  | identifier as id { IDENTIFIER id }
+  | identifier as id 
+		  { try Hashtbl.find keyword_table id
+			with Not_found -> IDENTIFIER id }
   | "<="    { LTE }
   | ','     { COMMA }
   | '{'     { LBRACE }
@@ -49,4 +61,9 @@ rule token = parse
   | ')'		{ RPAREN }
 (*  | _		{ token lexbuf } *)
   | '#' nonnl*  { token lexbuf }
+  | _ { raise Unexpected_token }
   | eof		{ EOF }
+
+
+(*  | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
+*)
