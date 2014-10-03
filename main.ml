@@ -10,7 +10,30 @@
 
 let main () =
 	let lexbuf = Lexing.from_channel stdin in
-		while (Parser.input Lexer.token lexbuf) do
+
+	let report_lex () =
+		let pos = lexbuf.Lexing.lex_curr_p in
+		let lnum = pos.Lexing.pos_lnum in
+		let cnum = pos.Lexing.pos_cnum in
+		let lexeme = Lexing.lexeme lexbuf in 
+		Printf.printf "line: %d, byte: %d, [%s]\n" 
+			lnum cnum lexeme
+	in
+
+	let parse () = 
+		try let rv = Parser.input Lexer.token lexbuf in
+				rv
+		with 
+		| Failure f ->
+			report_lex ();
+			print_endline f;
+			failwith f
+		| Parsing.Parse_error ->
+			report_lex ();
+			failwith "parse error"
+	in
+		
+		while (parse ()) do
 			()
 		done
 
