@@ -13,6 +13,10 @@
 open Printf
 open Lexing
 open Ast
+
+let parse_error s = Printf.printf "Parse error: %s\n" s
+
+
 %}
 
 /* Ocamlyacc Declarations */
