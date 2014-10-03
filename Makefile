@@ -9,7 +9,7 @@ TGT := oq
 OCAMLC := ocamlc -annot -g
 
 $(TGT): eval.cmo parser.cmo lexer.cmo main.ml
-	$(OCAMLC) -o $@ eval.ml parser.ml lexer.ml main.ml
+	$(OCAMLC) -o $@ ast.ml eval.ml parser.ml lexer.ml main.ml
 
 lexer.ml: lexer.mll
 	ocamllex $<
