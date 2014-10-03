@@ -8,8 +8,8 @@
 TGT := oq
 OCAMLC := ocamlc -annot -g
 
-$(TGT): ops.cmo parser.cmo lexer.cmo main.ml
-	$(OCAMLC) -o $@ ops.ml parser.ml lexer.ml main.ml
+$(TGT): eval.cmo parser.cmo lexer.cmo main.ml
+	$(OCAMLC) -o $@ eval.ml parser.ml lexer.ml main.ml
 
 lexer.ml: lexer.mll
 	ocamllex $<
@@ -17,10 +17,13 @@ lexer.ml: lexer.mll
 parser.ml: parser.mly
 	ocamlyacc $<
 
-ops.cmo ops.cmi: ops.ml
-	$(OCAMLC) -c ops.ml
+eval.cmo eval.cmi: ast.cmi eval.ml
+	$(OCAMLC) -c eval.ml
 
-parser.cmo parser.cmi: ops.cmi parser.ml
+ast.cmo ast.cmi: ast.ml
+	$(OCAMLC) -c ast.ml
+
+parser.cmo parser.cmi: eval.cmi ast.cmi parser.ml
 	$(OCAMLC) -c parser.mli parser.ml
 
 lexer.cmo: parser.cmi lexer.ml

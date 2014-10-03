@@ -12,7 +12,7 @@
 
 open Printf
 open Lexing
-open Ops
+open Ast
 %}
 
 /* Ocamlyacc Declarations */
@@ -54,7 +54,7 @@ input:
 	| cunit	input { false }
 ;
 cunit:	
-	| exp    { Ops.eval_and_print $1 }
+	| exp    { Eval.eval_and_print $1 }
 ;
 exp:
 	| NUM			{ NumS $1 }
