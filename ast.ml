@@ -80,3 +80,10 @@ let string_of_value = function
 	| Num n -> string_of_int n
 	| Closure (id, e1, _) -> "closure(" ^ (string_of_ident id) ^ ") {" ^
 		string_of_expression e1 ^ "}"
+
+
+
+let registry : expressionS list ref = ref []
+
+let register d =
+	registry := d :: !registry

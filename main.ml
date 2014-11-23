@@ -8,7 +8,9 @@
   it under the terms of the GNU Affero Public License v3.0
 *)
 
-let main () =
+let main debug =
+	let _ = Parsing.set_trace debug in
+
 	let lexbuf = Lexing.from_channel stdin in
 
 	let report_lex () =
@@ -16,7 +18,7 @@ let main () =
 		let lnum = pos.Lexing.pos_lnum in
 		let cnum = pos.Lexing.pos_cnum in
 		let lexeme = Lexing.lexeme lexbuf in 
-		Printf.printf "line: %d, byte: %d, [%s]\n" 
+		Printf.printf "line: %d, byte: %d, `%s'\n" 
 			lnum cnum lexeme
 	in
 
@@ -31,10 +33,19 @@ let main () =
 		| Parsing.Parse_error ->
 			report_lex ();
 			failwith "parse error"
+		| Lexer.Unexpected_token ->
+			report_lex ();
+			failwith "lexer error"
 	in
 		
 		while (parse ()) do
 			()
 		done
 
-let _ = main ()
+		; Eval.dump_registry ()
+
+
+let _ = 
+	match Sys.argv with
+	| [| progname; "--debug" |] -> main true
+	| _                         -> main false

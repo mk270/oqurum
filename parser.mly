@@ -58,7 +58,7 @@ input:
 	| cunit	input { false }
 ;
 cunit:	
-	| exp    { Eval.eval_and_print $1 }
+	| exp    { register $1 }
 ;
 exp:
 	| NUM			{ NumS $1 }

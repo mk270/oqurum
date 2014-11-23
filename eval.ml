@@ -176,3 +176,12 @@ let eval_and_print v =
 										print_endline s;
 										flush stdout;
 										s
+
+let dump_registry () =
+	!registry |>
+	List.rev |>
+	List.iter (fun d ->
+		d |>
+		desugar |>
+		string_of_expression |>
+		print_endline)
