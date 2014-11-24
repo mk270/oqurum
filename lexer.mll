@@ -24,16 +24,8 @@
 
   let keyword_table = Hashtbl.create 72
   let _ =
-    List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
-              [
-				("apply", APPLY);
-				("assign", ASSIGN);
-				("lambda", LAMBDA);
-				("defvar", DEFVAR);
-				("deffunc", DEFFUNC);
-				("seq", SEQ);
-				("if", IF);
-              ]
+    List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok) 
+               Keywords.keywords
 
 }
 let digit = ['0'-'9']

@@ -1,0 +1,7 @@
+apply
+assign
+lambda
+defvar
+deffunc
+seq
+if
