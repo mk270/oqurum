@@ -54,8 +54,8 @@ let parse_error s = Printf.printf "Parse error: %s\n" s
 /* Grammar follows */
 %%
 input:
-    | EOF { true } 
-	| cunit	input { false }
+    | EOF { false } 
+	| cunit	input { true }
 ;
 cunit:	
 	| exp    { register $1 }
