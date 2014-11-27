@@ -178,6 +178,23 @@ let eval_and_print v =
 										s
 
 let dump_registry () =
+	let rec eval_and_print env store = function
+		| [] -> ()
+		| v :: tl -> 
+			let result = interp (desugar v) env store in
+				match result with
+				| Result (vl, new_store) ->
+					let s = string_of_value vl in
+						print_endline s;
+						flush stdout;
+						eval_and_print env new_store tl
+	in
+	    !registry |>
+		List.rev |>
+		eval_and_print empty_env empty_storage
+
+(*
+let dump_registry () =
 	!registry |>
 	List.rev |>
 	List.iter (fun d ->
@@ -185,3 +202,4 @@ let dump_registry () =
 		desugar |>
 		string_of_expression |>
 		print_endline)
+*)
